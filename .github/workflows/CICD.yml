@@ -1,0 +1,64 @@
+name: FOODY CI/CD
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubunut-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        name: Mention Node.js Version
+        node-version: '14'
+
+    - name: Install NPM
+      run: npm run
+
+    - name: Build the project
+      run: npm run build
+
+    - name: Zip the builded file
+      run: tar -czf build.tar.gz build
+
+    - name: Uploada build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Uploading the build artifact
+        path: build.tar.gz
+
+
+  deploy:
+    needs: build
+    runs-on:  ubunut-latest
+
+    steps: 
+    - name:  Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Download the build artifact
+      uses: actions/download-artifact@v4
+      with:
+        path: build/ 
+
+    - name: Deploy via SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+        ssh-keyscan -H ~/.ssh/id_rsa >> ~/.ssh/known_hosts
+
+        scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} build/build.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/ec2-user/folder
+
+        ssh -i ~/.ssh/id_rsa -p  ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          cd /home/ec2-user/folder
+          tar -xzf build.tar.gz 
+          mv  build/* .
+        EOF
