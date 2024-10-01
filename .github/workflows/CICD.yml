@@ -1,64 +1,64 @@
-name: FOODY CI/CD
-
+name: FOODY App CI/CD
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
+    
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    steps: 
+    - name: Checkout repository 
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js 
+      uses: actions/setup-node@v2
       with:
-        name: Mention Node.js Version
-        node-version: '14'
-
-    - name: Install NPM
+        node-version: '14' # specify your Node.js version 
+        
+    - name: Install dependencies
       run: npm install
+      
+    - name: Build project 
+      run: npm run build # or your specific build command
+    
 
-    - name: Build the project
-      run: npm run build
+    - run: tar -czf build.tar.gz build
 
-    - name: Zip the builded file
-      run: tar -czf build.tar.gz build
-
-    - name: Uploada build artifact
+    - name: Upload build Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Uploading the build artifact
+        name: build-artifact
         path: build.tar.gz
 
 
   deploy:
     needs: build
-    runs-on:  ubuntu-latest
-
+    runs-on: ubuntu-latest
     steps: 
-    - name:  Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/Checkout@v4
 
-    - name: Download the build artifact
-      uses: actions/download-artifact@v4
-      with:
-        path: build/ 
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: build/
 
-    - name: Deploy via SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+      - name: Deploy via SSH 
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          
+          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} build/build.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/ec2-user/folder
 
-        ssh-keyscan -H ~/.ssh/id_rsa >> ~/.ssh/known_hosts
-
-        scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT }} build/build.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/ec2-user/folder
-
-        ssh -i ~/.ssh/id_rsa -p  ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd /home/ec2-user/folder
-          tar -xzf build.tar.gz 
-          mv  build/* .
-        EOF
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd /home/ec2-user/folder
+            rm -rf *.html *.js *.css static *.json *.ico
+            tar -xzf build.tar.gz
+            mv build/* .
+            rm -rf build build.tar.gz
+          EOF
