@@ -13,7 +13,7 @@ class NavScrollExample extends Component {
       <Container fluid>
         <Navbar.Brand className='imgNaveHeading' href="#">
            
-            <img className='navIcon' src="https://res.cloudinary.com/muni/image/upload/v1712740960/Untitled_design__1_-removebg-preview_scxzns.png"></img>
+            <img className='navIcon' alt="sekhar" src="https://res.cloudinary.com/muni/image/upload/v1712740960/Untitled_design__1_-removebg-preview_scxzns.png"></img>
            FOODY
        </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
