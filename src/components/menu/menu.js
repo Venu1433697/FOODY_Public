@@ -86,5 +86,4 @@ class Menu extends Component {
     );
   }
 }
-{/* key={item.id} */}
 export default Menu;
