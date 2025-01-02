@@ -1,4 +1,4 @@
-name: FOODY App CI/CD
+name: FOODY Application CI/CD
 on:
   push:
     branches: [ "main" ]
