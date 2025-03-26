@@ -10,11 +10,8 @@ phases:
       - npm install
       - echo "Building the React app..."
       - npm run build
-  post_build:
-    commands:
-      - echo "Deploying to S3..."
-      - aws s3 sync ./build s3://daddy3697.shop --delete
 
 artifacts:
   files:
     - '**/*'
+  base-directory: build
