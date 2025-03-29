@@ -1,13 +1,20 @@
 version: 0.2
-
 phases:
   install:
     runtime-versions:
-      nodejs: latest
+      nodejs: 20  
+    commands:
+      - echo "Checking npm version..."
+      - npm --version
+      - echo "Updating npm to v9.2.0..."
+      - npm install -g npm@9.2.0
+      
   build:
     commands:
+      - echo "Running security audit..."
+      - npm audit --audit-level=high  
       - echo "Installing dependencies..."
-      - npm install
+      - npm ci
       - echo "Building the React app..."
       - npm run build
 
@@ -15,4 +22,15 @@ artifacts:
   files:
     - '**/*'
   base-directory: build
-
+  exclude-paths:
+    - 'node_modules/**'  # Exclude node_modules
+    - 'src/**'           # Exclude source files if they sneak in
+    - 'public/**'        # Exclude public folder if copied
+    - '.git/**'          # Exclude Git metadata
+    - '*.md'             # Exclude Markdown files (e.g., README.md)
+    - 'package.json'     # Exclude package.json
+    - 'package-lock.json' # Exclude package-lock.json
+    - '.env'             # Exclude environment files
+    - '*.log'                 # Exclude log files
+    - '.DS_Store'             # Exclude Mac metadata files
+  discard-paths: yes     # Optional: flattens the structure if needed
