@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 20  
+      nodejs: 18  
     commands:
       - echo "Checking npm version..."
       - npm --version
@@ -33,16 +33,7 @@ phases:
       - npm run build
 
 artifacts:
-  base-directory: build  # ⚠️ Ensure build/ folder is root-level in S3
+  base-directory: build
   files:
     - '**/*'
-  exclude-paths:
-    - '**/node_modules/**'
-    - '**/src/**'
-    - '**/public/**'
-    - '**/.git/**'
-    - '**/*.md'
-    - '**/*.log'
-    - '**/.env'
-    - '**/.DS_Store'
   discard-paths: yes
