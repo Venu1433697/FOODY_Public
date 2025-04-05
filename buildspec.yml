@@ -13,7 +13,7 @@ phases:
       - npm install -g sonarqube-scanner
       - echo "Installing project dependencies..."
       - npm ci
-      
+
   pre_build:
     commands:
       - echo "Running SonarCloud scan..."
@@ -29,24 +29,20 @@ phases:
     commands:
       - echo "Running security audit..."
       - npm audit --audit-level=high || echo "Audit warnings found. Skipping failure..."
-      - echo "Building the React app..."
+      - echo "Building the React app for production..."
       - npm run build
 
 artifacts:
+  base-directory: build  # ⚠️ Ensure build/ folder is root-level in S3
   files:
     - '**/*'
-  base-directory: build
   exclude-paths:
-    - 'node_modules/**'
-    - 'src/**'
-    - 'public/**'
-    - '.git/**'
-    - '*.md'
-    - 'package.json'
-    - 'package-lock.json'
-    - '.env'
-    - '*.log'
-    - '.DS_Store'
+    - '**/node_modules/**'
+    - '**/src/**'
+    - '**/public/**'
+    - '**/.git/**'
+    - '**/*.md'
+    - '**/*.log'
+    - '**/.env'
+    - '**/.DS_Store'
   discard-paths: yes
-
-  
