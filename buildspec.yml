@@ -20,7 +20,7 @@ phases:
       - |
         sonar-scanner \
           -Dsonar.projectKey=Venu1433697_FOODY_Public \
-          -Dsonar.organization=Venu1433697 \
+          -Dsonar.organization=venu1433697 \
           -Dsonar.sources=src \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=$SONAR_TOKEN
