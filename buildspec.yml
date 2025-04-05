@@ -8,6 +8,11 @@ phases:
       - npm --version
       - echo "Updating npm to v9.2.0..."
       - npm install -g npm@9.2.0
+      - echo "Installing Sonarqube-cloud scanner"
+      - npm install -g sonarqube-scanner
+  pre-build:
+    commands:
+      - sonar-scanner
       
   build:
     commands:
