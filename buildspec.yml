@@ -10,7 +10,7 @@ phases:
       - npm install -g npm@9.2.0
       - echo "Installing Sonarqube-cloud scanner"
       - npm install -g sonarqube-scanner
-  pre-build:
+  pre_build:
     commands:
       - sonar-scanner
       
