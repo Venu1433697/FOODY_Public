@@ -36,4 +36,4 @@ artifacts:
   base-directory: .
   files:
     - '**/*'
-  discard-paths: yes
+  discard-paths: no
