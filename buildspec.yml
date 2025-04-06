@@ -33,7 +33,7 @@ phases:
       - npm run build
 
 artifacts:
-  base-directory: build
+  base-directory: .
   files:
     - '**/*'
   discard-paths: yes
